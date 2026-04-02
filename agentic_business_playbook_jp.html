@@ -1,0 +1,2051 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>エージェント型ビジネス プレイブック — ServiceNow エグゼクティブ参考資料</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sn-green: #00C7B1;
+    --sn-green-dim: #00a896;
+    --sn-dark: #0D1117;
+    --sn-navy: #131C2E;
+    --sn-mid: #1E2D45;
+    --sn-card: #162032;
+    --sn-blue: #1A7FC1;
+    --sn-blue-light: #38BDF8;
+    --text-primary: #E8EDF5;
+    --text-secondary: #8FA3BF;
+    --text-muted: #4D6480;
+    --accent-gold: #F59E0B;
+    --accent-rose: #F43F5E;
+    --border: rgba(0,199,177,0.15);
+    --border-subtle: rgba(255,255,255,0.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', 'Noto Sans JP', sans-serif;
+    background: var(--sn-dark);
+    color: var(--text-primary);
+    line-height: 1.9;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── STICKY NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(13,17,23,0.9);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sn-green);
+  }
+
+  .nav-dot {
+    width: 8px; height: 8px;
+    background: var(--sn-green);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 0.25rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+
+  .nav-links a:hover {
+    color: var(--sn-green);
+    background: rgba(0,199,177,0.08);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 8rem 2rem 6rem;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,199,177,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,199,177,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 800px; height: 800px;
+    background: radial-gradient(ellipse, rgba(0,199,177,0.12) 0%, transparent 65%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,199,177,0.1);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--sn-green);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    position: relative;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', 'Noto Sans JP', sans-serif;
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+    position: relative;
+    animation: fadeUp 0.8s 0.1s ease both;
+    max-width: 900px;
+  }
+
+  .hero h1 .accent { color: var(--sn-green); }
+
+  .hero-sub {
+    font-family: 'Noto Sans JP', 'DM Sans', sans-serif;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+    max-width: 620px;
+    margin: 1.5rem auto 0;
+    position: relative;
+    animation: fadeUp 0.8s 0.2s ease both;
+    line-height: 2.0;
+    overflow-wrap: break-word;
+  }
+
+  .hero-sources {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 3rem;
+    position: relative;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+
+  .source-pill {
+    background: var(--sn-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    font-family: 'DM Mono', monospace;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .source-pill:hover {
+    border-color: var(--sn-green);
+    color: var(--sn-green);
+  }
+
+  .source-pill span { color: var(--text-muted); margin-right: 6px; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SECTIONS ── */
+  section { position: relative; z-index: 1; }
+
+  .section-inner {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--sn-green);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    max-width: 60px;
+    height: 1px;
+    background: var(--sn-green);
+    opacity: 0.4;
+  }
+
+  .section-title {
+    font-family: 'Syne', 'Noto Sans JP', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: 0.01em;
+    margin-bottom: 1rem;
+  }
+
+  .section-desc {
+    font-family: 'Noto Sans JP', 'DM Sans', sans-serif;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 300;
+    max-width: 640px;
+    line-height: 2.0;
+    margin-bottom: 3rem;
+    overflow-wrap: break-word;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0 2rem;
+  }
+
+  /* ── STAT GRID ── */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    background: var(--border-subtle);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    overflow: hidden;
+    margin: 2rem 0;
+  }
+
+  .stat-card {
+    background: var(--sn-card);
+    padding: 2rem 1.5rem;
+    position: relative;
+    transition: background 0.3s;
+  }
+
+  .stat-card:hover { background: var(--sn-mid); }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--sn-green);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .stat-card:hover::before { opacity: 1; }
+
+  .stat-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: var(--sn-green);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    font-family: 'Noto Sans JP', 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-weight: 400;
+    overflow-wrap: break-word;
+  }
+
+  .stat-source {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    margin-top: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .stat-source:hover { color: var(--sn-green); }
+
+  .stat-source-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .src-eb { background: var(--sn-green); }
+  .src-ib { background: var(--sn-blue-light); }
+  .src-mk { background: var(--accent-gold); }
+
+  /* ── CALLOUT BOX ── */
+  .callout {
+    border-left: 3px solid var(--sn-green);
+    background: rgba(0,199,177,0.05);
+    border-radius: 0 12px 12px 0;
+    padding: 1.5rem 2rem;
+    margin: 2rem 0;
+    position: relative;
+  }
+
+  .callout-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--sn-green);
+    margin-bottom: 0.5rem;
+  }
+
+  .callout-text {
+    font-family: 'Noto Sans JP', 'DM Sans', sans-serif;
+    font-size: 1.05rem;
+    font-style: normal;
+    color: var(--text-primary);
+    font-weight: 400;
+    line-height: 1.9;
+    overflow-wrap: break-word;
+  }
+
+  .callout-source {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-top: 0.75rem;
+  }
+
+  /* ── FRAMEWORK TABLE ── */
+  .framework-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border-subtle);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 2rem 0;
+  }
+
+  .framework-col { background: var(--sn-card); }
+
+  .framework-header {
+    background: var(--sn-navy);
+    padding: 1rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-align: center;
+    color: var(--sn-green);
+    letter-spacing: 0.05em;
+  }
+
+  .framework-body {
+    padding: 1.25rem 1rem;
+    font-family: 'Noto Sans JP', 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.85;
+    overflow-wrap: break-word;
+  }
+
+  /* ── PHASE PLAYBOOK ── */
+  .phase-list { margin: 2rem 0; }
+
+  .phase-item {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 1.5rem;
+    padding: 1.75rem 0;
+    border-bottom: 1px solid var(--border-subtle);
+    transition: all 0.2s;
+    cursor: default;
+  }
+
+  .phase-item:last-child { border-bottom: none; }
+  .phase-item:hover { padding-left: 8px; }
+
+  .phase-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    line-height: 1;
+    transition: color 0.2s;
+  }
+
+  .phase-item:hover .phase-num { color: var(--sn-green); }
+
+  .phase-content {}
+
+  .phase-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .phase-horizon {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    background: rgba(0,199,177,0.1);
+    border: 1px solid var(--border);
+    color: var(--sn-green);
+    padding: 2px 8px;
+    border-radius: 100px;
+  }
+
+  .phase-desc {
+    font-family: 'Noto Sans JP', 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.9;
+    margin-bottom: 0.5rem;
+    overflow-wrap: break-word;
+  }
+
+  .phase-signal {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .phase-signal strong { color: var(--sn-blue-light); font-family: 'DM Sans', sans-serif; font-weight: 500; }
+
+  /* ── IMPERATIVE CARDS ── */
+  .imperative-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  .imperative-card {
+    background: var(--sn-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 1.75rem;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .imperative-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--sn-green), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+  }
+
+  .imperative-card:hover { transform: translateY(-3px); border-color: var(--border); }
+  .imperative-card:hover::after { transform: scaleX(1); }
+
+  .imperative-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--sn-green);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.75rem;
+  }
+
+  .imperative-title {
+    font-family: 'Syne', 'Noto Sans JP', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.35;
+  }
+
+  .imperative-body {
+    font-family: 'Noto Sans JP', 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.9;
+    overflow-wrap: break-word;
+  }
+
+  .imperative-bullets {
+    margin-top: 1rem;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .imperative-bullets li {
+    font-family: 'Noto Sans JP', 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    padding-left: 1rem;
+    position: relative;
+    overflow-wrap: break-word;
+  }
+
+  .imperative-bullets li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--sn-green);
+    font-size: 0.7rem;
+  }
+
+  /* ── MATRIX TABLE ── */
+  .matrix {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.84rem;
+    margin: 1.5rem 0;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .matrix th {
+    background: var(--sn-navy);
+    color: var(--sn-green);
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.85rem 1.25rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .matrix td {
+    background: var(--sn-card);
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    vertical-align: top;
+    line-height: 1.8;
+    font-family: 'Noto Sans JP', 'DM Sans', sans-serif;
+    overflow-wrap: break-word;
+  }
+
+  .matrix tr:last-child td { border-bottom: none; }
+
+  .matrix tr:nth-child(even) td { background: var(--sn-mid); }
+
+  .matrix td:first-child {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  /* ── FOUR PILLAR ── */
+  .pillar-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  .pillar {
+    background: var(--sn-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 1.5rem 1.25rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s;
+  }
+
+  .pillar:hover { border-color: var(--sn-green); transform: translateY(-2px); }
+
+  .pillar-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .pillar-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--sn-green);
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.04em;
+  }
+
+  .pillar-body {
+    font-family: 'Noto Sans JP', 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.85;
+    overflow-wrap: break-word;
+  }
+
+  /* ── OUTCOMES TABLE ── */
+  .outcomes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border-subtle);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 2rem 0;
+  }
+
+  .outcome-item {
+    background: var(--sn-card);
+    padding: 1.25rem 1.5rem;
+    transition: background 0.2s;
+  }
+
+  .outcome-item:hover { background: var(--sn-mid); }
+
+  .outcome-domain {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: var(--sn-green);
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .outcome-result {
+    font-family: 'Noto Sans JP', 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    overflow-wrap: break-word;
+  }
+
+  /* ── WORK-VALUE MATRIX ── */
+  .wv-matrix {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 1px;
+    background: var(--border-subtle);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 2rem 0;
+    border: 1px solid var(--border-subtle);
+  }
+
+  .wv-cell {
+    background: var(--sn-card);
+    padding: 1.5rem;
+    transition: background 0.2s;
+  }
+
+  .wv-cell:hover { background: var(--sn-mid); }
+
+  .wv-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  .wv-automate { background: rgba(0,199,177,0.12); color: var(--sn-green); }
+  .wv-augment  { background: rgba(56,189,248,0.12); color: var(--sn-blue-light); }
+  .wv-protect  { background: rgba(245,158,11,0.12); color: var(--accent-gold); }
+  .wv-retire   { background: rgba(107,114,128,0.12); color: #6B7280; }
+
+  .wv-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .wv-desc {
+    font-family: 'Noto Sans JP', 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    overflow-wrap: break-word;
+  }
+
+  /* ── 90-DAY ACTION ── */
+  .action-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  .action-col {
+    background: var(--sn-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .action-header {
+    background: var(--sn-navy);
+    padding: 1rem 1.25rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .action-header-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--sn-green);
+  }
+
+  .action-body {
+    padding: 1.25rem;
+  }
+
+  .action-item {
+    font-family: 'Noto Sans JP', 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-left: 1rem;
+    position: relative;
+    line-height: 1.7;
+    overflow-wrap: break-word;
+  }
+
+  .action-item:last-child { border-bottom: none; }
+
+  .action-item::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--sn-green);
+    font-size: 0.7rem;
+    top: 0.55rem;
+  }
+
+  /* ── SOURCES SECTION ── */
+  #sources { background: var(--sn-navy); }
+
+  .sources-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .source-card {
+    background: var(--sn-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 1.75rem;
+    transition: all 0.25s;
+  }
+
+  .source-card:hover {
+    border-color: var(--border);
+    transform: translateY(-2px);
+  }
+
+  .source-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    font-weight: 500;
+  }
+
+  .badge-eb { background: rgba(0,199,177,0.12); color: var(--sn-green); border: 1px solid rgba(0,199,177,0.25); }
+  .badge-ib { background: rgba(56,189,248,0.12); color: var(--sn-blue-light); border: 1px solid rgba(56,189,248,0.25); }
+  .badge-mk { background: rgba(245,158,11,0.12); color: var(--accent-gold); border: 1px solid rgba(245,158,11,0.25); }
+
+  .source-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.4rem;
+    line-height: 1.3;
+  }
+
+  .source-author {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+
+  .source-pages-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+
+  .source-page-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .source-page-item {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .page-num {
+    font-family: 'DM Mono', monospace;
+    color: var(--text-muted);
+  }
+
+  .page-topic { color: var(--text-secondary); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--sn-dark);
+    border-top: 1px solid var(--border-subtle);
+    padding: 2rem;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  footer span { color: var(--sn-green); }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── SECTION BG ALTERNATE ── */
+  .bg-alt { background: var(--sn-navy); }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .framework-grid, .pillar-row, .action-cols { grid-template-columns: 1fr 1fr; }
+    .sources-grid, .outcomes-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .wv-matrix { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 480px) {
+    .framework-grid, .pillar-row, .action-cols, .stat-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 2.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <div class="nav-dot"></div>
+    ServiceNow · エージェント型プレイブック
+  </div>
+  <ul class="nav-links">
+    <li><a href="#burning-platform">背景</a></li>
+    <li><a href="#strategic-frame">フレームワーク</a></li>
+    <li><a href="#blueprint">Blueprint</a></li>
+    <li><a href="#imperatives">優先課題</a></li>
+    <li><a href="#playbook">プレイブック</a></li>
+    <li><a href="#action">90日アクション</a></li>
+    <li><a href="#sources">出典</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-tag">
+    <div class="nav-dot"></div>
+    エグゼクティブ参考資料 · 2026年3月
+  </div>
+  <h1>エージェント型<br>ビジネス<span class="accent">変革</span><br>プレイブック</h1>
+  <p class="hero-sub">パイロットから企業全体のエージェント型実行へ移行を進めるCスイートリーダーとAI変革チームのための、根拠あるエビデンスベースのリファレンス。</p>
+  <div class="hero-sources">
+    <a href="https://servicenow.seismic.com/Link/Content/DC4dJBQCFpDBMG7C3RJpM9bjb6mB" target="_blank" rel="noopener" style="text-decoration:none">
+      <div class="source-pill"><span>SN</span>Blueprint for Agentic Business ↗</div>
+    </a>
+    <a href="https://www.servicenow.com/in/standard/resource-center/white-paper/wp-innovation-brief-work-reimagined.html" target="_blank" rel="noopener" style="text-decoration:none">
+      <div class="source-pill"><span>SN</span>Innovation Brief: Work Reimagined ↗</div>
+    </a>
+    <a href="https://www.mckinsey.com/capabilities/people-and-organizational-performance/our-insights/the-state-of-organizations" target="_blank" rel="noopener" style="text-decoration:none">
+      <div class="source-pill"><span>MK</span>State of Organizations 2026 ↗</div>
+    </a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 1: BURNING PLATFORM -->
+<section id="burning-platform">
+  <div class="section-inner">
+    <div class="section-label reveal">01 · 緊急課題</div>
+    <h2 class="section-title reveal">AIのパラドックス：<br>普及する導入、希少な価値</h2>
+    <p class="section-desc reveal">企業のAI支出は過去最高水準に達している。しかし、AI成熟度と収益への実質的な影響は、大多数の組織で依然として限定的なままだ。</p>
+
+    <div class="stat-grid reveal">
+      <div class="stat-card">
+        <div class="stat-number">88%</div>
+        <div class="stat-label">事業の一部以上でAIを導入している組織の割合</div>
+        <div class="stat-source" onclick="scrollToSource('mk')"><div class="stat-source-dot src-mk"></div>McKinsey SoO 2026 · p.7</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">1%</div>
+        <div class="stat-label">GenAI展開を「成熟している」と評価する米国Cスイートの割合</div>
+        <div class="stat-source" onclick="scrollToSource('mk')"><div class="stat-source-dot src-mk"></div>McKinsey SoO 2026 · p.7</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">86%</div>
+        <div class="stat-label">組織が日々のAI運用に備えていないと感じている割合</div>
+        <div class="stat-source" onclick="scrollToSource('mk')"><div class="stat-source-dot src-mk"></div>McKinsey SoO 2026 · p.8</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">19%</div>
+        <div class="stat-label">AIによる5%超の収益増加を報告している組織の割合</div>
+        <div class="stat-source" onclick="scrollToSource('mk')"><div class="stat-source-dot src-mk"></div>McKinsey SoO 2026 · p.7</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">14%</div>
+        <div class="stat-label">明確な戦略を持ちAIを継続的に推進するリーダーがいる組織の割合</div>
+        <div class="stat-source" onclick="scrollToSource('mk')"><div class="stat-source-dot src-mk"></div>McKinsey SoO 2026 · p.8</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">20%</div>
+        <div class="stat-label">記録的な投資にもかかわらず、企業AIの成熟度が前年比で低下した割合</div>
+        <div class="stat-source" onclick="scrollToSource('eb')"><div class="stat-source-dot src-eb"></div>SN Agentic Blueprint · p.3</div>
+      </div>
+    </div>
+
+    <div class="callout reveal">
+      <div class="callout-label">核心的診断</div>
+      <div class="callout-text">「ほとんどの組織は、昨日の成功基準に基づいて明日のビジネスを自動化しようとしている。ベンダーはAIを既存のアプリケーションにサイドカーとして付け足した——切り離されたプロセスに重ねられた浅い知性だ。モデルは推論できた。しかし、ガバナンス・コンテキスト・説明責任を持ってシステムをまたいで実行することはできなかった。」</div>
+      <div class="callout-source">SN Blueprint for Agentic Business — Executive Brief · p.3 &nbsp;|&nbsp; Innovation Brief: Work Reimagined · pp.11–12</div>
+    </div>
+
+    <h3 style="font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; margin:2rem 0 1rem; color:var(--text-primary);">AI導入の主な障壁</h3>
+    <table class="matrix reveal">
+      <thead>
+        <tr>
+          <th>障壁</th>
+          <th>北米</th>
+          <th>欧州</th>
+          <th>アジア太平洋</th>
+          <th>出典</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>AIへの懸念（偏り・知財・雇用代替）</td><td>44%</td><td>48%</td><td>46%</td><td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-muted)">MK p.9</td></tr>
+        <tr><td>規制・倫理・法的懸念</td><td>44%</td><td>48%</td><td>41%</td><td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-muted)">MK p.9</td></tr>
+        <tr><td>組織的課題（変革・サイロ化）</td><td>40%</td><td>39%</td><td>39%</td><td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-muted)">MK p.9</td></tr>
+        <tr><td>不十分な技術基盤（レガシーシステム）</td><td>30%</td><td>31%</td><td>33%</td><td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-muted)">MK p.9</td></tr>
+        <tr><td>明確な戦略やリーダーシップ支援の欠如</td><td>32%</td><td>30%</td><td>28%</td><td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-muted)">MK p.9</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 2: STRATEGIC FRAME -->
+<section id="strategic-frame" class="bg-alt">
+  <div class="section-inner">
+    <div class="section-label reveal">02 · 戦略的フレームワーク</div>
+    <h2 class="section-title reveal">自動化からエージェント型へ：<br>A→A→X²フレームワーク</h2>
+    <p class="section-desc reveal">効率化を超えて指数関数的な価値創造へ移行する組織が次の10年を定義する。その道筋は線形ではなく、複利的だ。</p>
+
+    <div class="framework-grid reveal">
+      <div class="framework-col">
+        <div class="framework-header">自動化（AUTOMATE）</div>
+        <div class="framework-body">日常的・高反復・低戦略価値の業務をエージェントに委任。コスト効率とスピード向上に注力。ほとんどの組織はここで止まっている。</div>
+      </div>
+      <div class="framework-col">
+        <div class="framework-header">拡張（AUGMENT）</div>
+        <div class="framework-body">高価値・複雑な業務で人間とエージェントをペアリング。人間の判断力＋エージェントのスピード＝複利的品質向上。各役割の人間対AI比率を定義する。</div>
+      </div>
+      <div class="framework-col">
+        <div class="framework-header">探索（EXPAND）</div>
+        <div class="framework-body">解放されたキャパシティで以前は不可能だった業務を探求——新製品・新サービス・大規模なトレンド予測・潜在的な顧客インサイトの統合。</div>
+      </div>
+      <div class="framework-col">
+        <div class="framework-header">指数的成長（X²）</div>
+        <div class="framework-body">複利的AIフライホイールによる持続的競争優位：ワークフローを実行するたびに、データ・ガバナンス・コンテキスト・実行が相互に強化される。</div>
+      </div>
+    </div>
+
+    <div class="callout reveal">
+      <div class="callout-label">警鐘 — Innovation Brief · p.10</div>
+      <div class="callout-text">「競合他社が拡張型AIを探求する中、自動化に満足する組織は自らの陳腐化を加速させる可能性がある。AIエージェントは『無限のインターン』——既存の仕事を引き継ぐだけでなく、新しい業務を解放するべきだ。」</div>
+      <div class="callout-source">Brian Solis、ServiceNow グローバルイノベーション責任者 — Work Reimagined Innovation Brief · pp.10–12</div>
+    </div>
+
+    <h3 style="font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; margin:2rem 0 1rem; color:var(--text-primary);">先駆者（Pioneer）の優位性</h3>
+    <div class="stat-grid reveal">
+      <div class="stat-card">
+        <div class="stat-number">64%</div>
+        <div class="stat-label">AIパイオニアがマクロ環境への好影響を期待（非パイオニアの45%に対して）</div>
+        <div class="stat-source" onclick="scrollToSource('mk')"><div class="stat-source-dot src-mk"></div>McKinsey SoO 2026 · p.9</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">56%</div>
+        <div class="stat-label">パイオニアが従業員のより高い目標達成を確信（非パイオニアの26%に対して）</div>
+        <div class="stat-source" onclick="scrollToSource('mk')"><div class="stat-source-dot src-mk"></div>McKinsey SoO 2026 · p.9</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">60%</div>
+        <div class="stat-label">3年間でAIリーダーが達成した高い株主リターン</div>
+        <div class="stat-source" onclick="scrollToSource('ib')"><div class="stat-source-dot src-ib"></div>BCG via Innovation Brief · p.12</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">3×</div>
+        <div class="stat-label">AI活用度の高い業界と低い業界の従業員一人当たり収益の差</div>
+        <div class="stat-source" onclick="scrollToSource('ib')"><div class="stat-source-dot src-ib"></div>PwC 2025 via Innovation Brief · p.12</div>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; margin:2rem 0 1rem; color:var(--text-primary);">業務・価値マトリクス：AIをどこに展開するか</h3>
+    <div class="wv-matrix reveal">
+      <div class="wv-cell">
+        <div class="wv-tag wv-augment">拡張</div>
+        <div class="wv-title">高価値 · 高反復</div>
+        <div class="wv-desc">人間とエージェントをペアリングしてスピードとインサイトを増幅。人間の判断が主導し、エージェントが大規模実行。</div>
+      </div>
+      <div class="wv-cell">
+        <div class="wv-tag wv-protect">保護・強化</div>
+        <div class="wv-title">高価値 · 低反復</div>
+        <div class="wv-desc">人間のリーダーシップを維持。リサーチ・シナリオモデリング・意思決定支援でAIを活用。</div>
+      </div>
+      <div class="wv-cell">
+        <div class="wv-tag wv-automate">自動化</div>
+        <div class="wv-title">低価値 · 高反復</div>
+        <div class="wv-desc">エージェントに完全委任。人間を高価値業務に解放。ROIを厳格に測定。</div>
+      </div>
+      <div class="wv-cell">
+        <div class="wv-tag wv-retire">廃止・簡素化</div>
+        <div class="wv-title">低価値 · 低反復</div>
+        <div class="wv-desc">廃止・統合、または停止。すべてのプロセスが自動化に値するわけではない——消えるべきものもある。</div>
+      </div>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--text-muted);margin-top:-1rem;">Innovation Brief: Work Reimagined · Phase 2, pp.13–14</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 3: BLUEPRINT -->
+<section id="blueprint">
+  <div class="section-inner">
+    <div class="section-label reveal">03 · ServiceNow Blueprint</div>
+    <h2 class="section-title reveal">AI Control Tower：<br>ServiceNowのアーキテクチャと優位性</h2>
+    <p class="section-desc reveal">エージェント型時代にServiceNowが勝つ理由を理解する3つの視点：競合環境、AIネイティブアーキテクチャ、そして顧客成果での実績。</p>
+
+    <div class="callout reveal">
+      <div class="callout-label">Jensen Huang、NVIDIA CEO</div>
+      <div class="callout-text">「ServiceNowは、エンタープライズAIエージェントの最良のプラットフォーム、オペレーティングシステムになる運命にある。」</div>
+      <div class="callout-source">SN Blueprint for Agentic Business — Executive Brief · p.4 &nbsp;|&nbsp; Technical Foundation · p.7</div>
+    </div>
+
+    <!-- ── 3A: COMPETITIVE LANDSCAPE ── -->
+    <div style="margin:3rem 0 1rem;">
+      <div class="section-label reveal" style="font-size:0.68rem;">3A · 競合環境</div>
+      <h3 style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.5rem;margin-bottom:0.5rem;color:var(--text-primary);" class="reveal">業界は問題を間違えている</h3>
+      <p style="color:var(--text-secondary);font-size:0.9rem;max-width:680px;line-height:1.8;margin-bottom:2rem;" class="reveal">ベンチマークスコア・パラメータ数・コンテキストウィンドウで測る軍拡競争が続いている。毎四半期、新モデルが首位を主張し、1位と5位の差は縮まる。知性のコストは3年間で一桁下がった。それが問題ではない。それはシグナルだ：価値は知性から実行へとシフトしている。</p>
+    </div>
+
+    <div class="callout reveal" style="border-left-color:var(--sn-blue-light);">
+      <div class="callout-label" style="color:var(--sn-blue-light);">決定的なアナロジー — SN Technical Foundation · p.6</div>
+      <div class="callout-text">GPSは個人がルートを最適化するのを助ける——強力で、パーソナライズされ、便利だが、ローカルだ。航空管制は何千もの動く部分を同時に調整し、安全制約を適用し、チームとシステムをまたいでルーティングし、全空域にわたるリアルタイムの運用意識を維持する。一方は個人を支援する。他方はシステムを管理する。それが他社が構築しているものとServiceNowがすでに運用しているものの違いだ。</div>
+    </div>
+
+    <!-- GPS vs ATC illustration -->
+    <div class="reveal" style="margin:2rem 0;">
+      <svg viewBox="0 0 880 250" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;border-radius:12px;overflow:hidden;" aria-label="GPSと航空管制の比較図">
+
+        <!-- ── LEFT PANEL: GPS ── -->
+        <rect width="440" height="250" fill="#0D1520"/>
+
+        <!-- Map grid (streets) -->
+        <line x1="0" y1="50" x2="440" y2="50" stroke="#1A2535" stroke-width="6"/>
+        <line x1="0" y1="100" x2="440" y2="100" stroke="#1A2535" stroke-width="6"/>
+        <line x1="0" y1="150" x2="440" y2="150" stroke="#1A2535" stroke-width="6"/>
+        <line x1="0" y1="200" x2="440" y2="200" stroke="#1A2535" stroke-width="6"/>
+        <line x1="80" y1="0" x2="80" y2="250" stroke="#1A2535" stroke-width="6"/>
+        <line x1="160" y1="0" x2="160" y2="250" stroke="#1A2535" stroke-width="6"/>
+        <line x1="240" y1="0" x2="240" y2="250" stroke="#1A2535" stroke-width="6"/>
+        <line x1="320" y1="0" x2="320" y2="250" stroke="#1A2535" stroke-width="6"/>
+        <line x1="400" y1="0" x2="400" y2="250" stroke="#1A2535" stroke-width="6"/>
+
+        <!-- GPS route (teal dashed) -->
+        <polyline points="80,200 80,100 240,100 240,50 320,50" stroke="#00C7B1" stroke-width="2.5" fill="none" stroke-dasharray="8 6" stroke-linecap="round" opacity="0.7"/>
+
+        <!-- Route start dot -->
+        <circle cx="80" cy="200" r="5" fill="#00C7B1" opacity="0.4"/>
+        <circle cx="80" cy="200" r="3" fill="#00C7B1" opacity="0.9"/>
+
+        <!-- Car (mid-route) -->
+        <g transform="translate(160, 100)">
+          <rect x="-13" y="-9" width="26" height="18" rx="5" fill="#00C7B1" opacity="0.1"/>
+          <rect x="-10" y="-6" width="20" height="12" rx="3" fill="#00C7B1" opacity="0.95"/>
+          <rect x="-7" y="-11" width="14" height="7" rx="2" fill="#00C7B1" opacity="0.8"/>
+        </g>
+
+        <!-- Destination pin -->
+        <g transform="translate(320, 50)">
+          <circle cx="0" cy="-8" r="22" fill="#00C7B1" opacity="0.04"/>
+          <circle cx="0" cy="-8" r="14" fill="#00C7B1" opacity="0.06"/>
+          <path d="M 0,-26 C -12,-26 -12,-10 -12,-10 C -12,2 0,18 0,18 C 0,18 12,2 12,-10 C 12,-10 12,-26 0,-26 Z" fill="#00C7B1" opacity="0.95"/>
+          <circle cx="0" cy="-10" r="5" fill="#0D1520"/>
+          <circle cx="0" cy="-10" r="2.5" fill="#00C7B1" opacity="0.7"/>
+        </g>
+
+        <!-- GPS label -->
+        <text x="28" y="30" font-family="'DM Mono', monospace" font-size="9" fill="#00C7B1" letter-spacing="3" opacity="0.9">GPS</text>
+        <text x="28" y="46" font-family="'DM Sans', sans-serif" font-size="10" fill="#8FA3BF" opacity="0.75">個人を支援</text>
+
+        <!-- ── RIGHT PANEL: ATC ── -->
+        <rect x="440" y="0" width="440" height="250" fill="#131C2E"/>
+
+        <!-- Radar rings -->
+        <circle cx="660" cy="118" r="92" stroke="#1E3040" stroke-width="1" fill="none"/>
+        <circle cx="660" cy="118" r="70" stroke="#1E3040" stroke-width="1" fill="none"/>
+        <circle cx="660" cy="118" r="48" stroke="#1E3040" stroke-width="1" fill="none"/>
+        <circle cx="660" cy="118" r="26" stroke="#1E3040" stroke-width="1.5" fill="none"/>
+
+        <!-- Crosshairs -->
+        <line x1="565" y1="118" x2="755" y2="118" stroke="#1E3040" stroke-width="0.75"/>
+        <line x1="660" y1="23" x2="660" y2="213" stroke="#1E3040" stroke-width="0.75"/>
+        <line x1="594" y1="52" x2="726" y2="184" stroke="#1E3040" stroke-width="0.5" opacity="0.5"/>
+        <line x1="726" y1="52" x2="594" y2="184" stroke="#1E3040" stroke-width="0.5" opacity="0.5"/>
+
+        <!-- Sweep sector -->
+        <path d="M 660 118 L 752 63 A 92 92 0 0 0 706 30 Z" fill="#00C7B1" opacity="0.05"/>
+        <line x1="660" y1="118" x2="752" y2="63" stroke="#00C7B1" stroke-width="1.5" opacity="0.55"/>
+
+        <!-- Coordination flight paths -->
+        <line x1="605" y1="70" x2="698" y2="60" stroke="#38BDF8" stroke-width="0.75" stroke-dasharray="5 4" opacity="0.25"/>
+        <line x1="698" y1="60" x2="735" y2="128" stroke="#38BDF8" stroke-width="0.75" stroke-dasharray="5 4" opacity="0.25"/>
+        <line x1="640" y1="92" x2="605" y2="70" stroke="#00C7B1" stroke-width="0.75" stroke-dasharray="5 4" opacity="0.25"/>
+        <line x1="625" y1="158" x2="672" y2="172" stroke="#38BDF8" stroke-width="0.75" stroke-dasharray="5 4" opacity="0.25"/>
+
+        <!-- Aircraft 1 -->
+        <g transform="translate(605, 70) rotate(55)"><polygon points="0,-7 -4,5.5 0,3 4,5.5" fill="#38BDF8" opacity="0.9"/></g>
+        <circle cx="605" cy="70" r="3.5" fill="#38BDF8" opacity="0.2"/>
+
+        <!-- Aircraft 2 -->
+        <g transform="translate(698, 60) rotate(140)"><polygon points="0,-7 -4,5.5 0,3 4,5.5" fill="#38BDF8" opacity="0.9"/></g>
+        <circle cx="698" cy="60" r="3.5" fill="#38BDF8" opacity="0.2"/>
+
+        <!-- Aircraft 3 (with pulse) -->
+        <g transform="translate(735, 128) rotate(215)"><polygon points="0,-7 -4,5.5 0,3 4,5.5" fill="#00C7B1" opacity="0.9"/></g>
+        <circle cx="735" cy="128" r="8" fill="none" stroke="#00C7B1" stroke-width="1" opacity="0.35"/>
+        <circle cx="735" cy="128" r="4" fill="#00C7B1" opacity="0.2"/>
+
+        <!-- Aircraft 4 -->
+        <g transform="translate(625, 158) rotate(325)"><polygon points="0,-7 -4,5.5 0,3 4,5.5" fill="#38BDF8" opacity="0.9"/></g>
+
+        <!-- Aircraft 5 -->
+        <g transform="translate(672, 172) rotate(285)"><polygon points="0,-7 -4,5.5 0,3 4,5.5" fill="#00C7B1" opacity="0.75"/></g>
+
+        <!-- Aircraft 6 (near center, with pulse) -->
+        <g transform="translate(640, 92) rotate(72)"><polygon points="0,-7 -4,5.5 0,3 4,5.5" fill="#38BDF8" opacity="0.9"/></g>
+        <circle cx="640" cy="92" r="5" fill="none" stroke="#38BDF8" stroke-width="1" opacity="0.4"/>
+
+        <!-- ATC label -->
+        <text x="458" y="30" font-family="'DM Mono', monospace" font-size="9" fill="#00C7B1" letter-spacing="3" opacity="0.9">航空管制</text>
+        <text x="458" y="46" font-family="'DM Sans', sans-serif" font-size="10" fill="#8FA3BF" opacity="0.75">システムを管理</text>
+
+        <!-- ── CENTER DIVIDER & VS ── -->
+        <line x1="440" y1="16" x2="440" y2="234" stroke="#243040" stroke-width="1"/>
+        <rect x="418" y="105" width="44" height="26" rx="6" fill="#0D1117" stroke="#243040" stroke-width="1"/>
+        <text x="440" y="123" text-anchor="middle" font-family="'Syne', sans-serif" font-size="10" font-weight="700" fill="#4D6480" letter-spacing="2">VS</text>
+
+      </svg>
+    </div>
+
+    <h3 style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;margin:2.5rem 0 1rem;color:var(--text-primary);">競合他社はそれぞれ問題の一部を解決する。しかし全てを解決するものはない。</h3>
+
+    <div style="overflow-x:auto;">
+    <table class="matrix reveal" style="min-width:700px;">
+      <thead>
+        <tr>
+          <th>競合タイプ</th>
+          <th>解決すること</th>
+          <th>重大な欠点</th>
+          <th>SDAGの観点</th>
+          <th>出典</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>スタンドアロンLLM<br><span style="font-size:0.7rem;color:var(--text-muted);">OpenAI, Anthropic, Google</span></td>
+          <td>高度な推論・言語・コード生成</td>
+          <td>エンタープライズコンテキストなし、実行レイヤーなし、永続メモリなし、ガバナンスなし。説明はできる——解決はできない。</td>
+          <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--sn-blue-light);">DECIDE の一部のみ</td>
+          <td style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--text-muted);">TF p.22</td>
+        </tr>
+        <tr>
+          <td>Vibe Coding<br><span style="font-size:0.7rem;color:var(--text-muted);">Cursor, Replit, Bolt</span></td>
+          <td>高速プロトタイピング、開発障壁を劇的に低下</td>
+          <td>最初の20%を簡単にする。残りの80%——堅牢化・統合・ガバナンス・維持管理——にコストが宿る。プロセス資産がない。</td>
+          <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--sn-blue-light);">スピードはあるが深みがない</td>
+          <td style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--text-muted);">TF p.22–23</td>
+        </tr>
+        <tr>
+          <td>データプラットフォーム<br><span style="font-size:0.7rem;color:var(--text-muted);">Snowflake, Databricks</span></td>
+          <td>エンタープライズデータの整理・モデリング・分析</td>
+          <td>実行なきインサイト。インサイトを行動に移すには別システムが必要。業務コンテキスト不在。実行ネイティブのガバナンスなし。</td>
+          <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--sn-blue-light);">SENSE + DECIDE の一部のみ</td>
+          <td style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--text-muted);">TF p.23</td>
+        </tr>
+        <tr>
+          <td>デジタルワーカー・エージェントFW<br><span style="font-size:0.7rem;color:var(--text-muted);">OpenClaw, Cowork</span></td>
+          <td>タスクレベルの自律性；知識業務の自動化</td>
+          <td>エンタープライズ実行レイヤーではなくタスクレイヤーで動作。RBAC・ポリシー適用・監査可能性なし。OpenClaw：Cisco AIは「画期的」と評したが、セキュリティの「悪夢」とも称した。</td>
+          <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--sn-blue-light);">DECIDE + ACT の一部；GOVERN 不可</td>
+          <td style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--text-muted);">TF p.24–25</td>
+        </tr>
+        <tr>
+          <td style="color:var(--sn-green);font-weight:600;">ServiceNow AI Control Tower</td>
+          <td style="color:var(--sn-green);">統合プラットフォーム：データ・AI・ワークフロー・セキュリティを単一オペレーションモデルに統合</td>
+          <td style="color:var(--sn-green);">なし。エンタープライズ規模で4つのループすべてを閉じる唯一のアーキテクチャ。</td>
+          <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--sn-green);">SENSE → DECIDE → ACT → GOVERN</td>
+          <td style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--text-muted);">TF p.5</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="callout reveal" style="border-left-color:var(--accent-gold);margin-top:2rem;">
+      <div class="callout-label" style="color:var(--accent-gold);">直感に反する真実 — SN Technical Foundation · p.6</div>
+      <div class="callout-text">AIエージェントは人間よりもプラットフォームを必要とする。人間には境界に関する直感がある。しかし強力なエージェントははるかに多くのことができる——つまりリスクも増幅される。プラットフォームがガードレールを供給しなければ。エージェントが有能になればなるほど、アイデンティティ解決・エンタイトルメント・ワークフロー制約・統合ガバナンス・監査証拠への依存度が高まる。これらの基盤がなければ、優秀なエージェントは優秀なリスクとなる。</div>
+      <div class="callout-source">SN Blueprint for Agentic Business — Technical Foundation · pp.6–7</div>
+    </div>
+
+    <!-- ── 3B: ARCHITECTURE ── -->
+    <div style="margin:4rem 0 1rem;">
+      <div class="section-label reveal" style="font-size:0.68rem;">3B · AIネイティブアーキテクチャ</div>
+      <h3 style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.5rem;margin-bottom:0.5rem;color:var(--text-primary);" class="reveal">Sense. Decide. Act. Govern.</h3>
+      <p style="color:var(--text-secondary);font-size:0.9rem;max-width:680px;line-height:1.8;margin-bottom:2rem;" class="reveal">4つの相互連携機能がAI Control Towerを支える。真の自律ワークフローは、データ・実行インフラ・知性・ガバナンスが緊密に統合されたスタックを必要とする。ServiceNowはこのスタックをエンタープライズ運用の中心で所有・運用する唯一の存在だ。</p>
+    </div>
+
+    <!-- SENSE -->
+    <div style="background:var(--sn-card);border:1px solid var(--border-subtle);border-radius:14px;padding:2rem;margin-bottom:1rem;" class="reveal">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;">
+        <div style="width:44px;height:44px;background:rgba(0,199,177,0.12);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">📡</div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;color:var(--sn-green);letter-spacing:0.04em;">SENSE</div>
+          <div style="font-size:0.78rem;color:var(--text-muted);font-family:'DM Mono',monospace;">エンタープライズデータ優位性の解放</div>
+        </div>
+      </div>
+      <p style="font-size:0.88rem;color:var(--text-secondary);line-height:1.75;margin-bottom:1.25rem;">ほとんどのLLMはインターネットで訓練される。ServiceNowはAIに企業コンテキストを提供する——資産・サービス・依存関係・オーナーシップ・運用状態の継続的に更新されるモデル。組織のデジタルファブリックへの深い読み書きエージェンシー。</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.75rem;">
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">CSDM + CMDB</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">デジタル資産・ビジネスサービス・人員・ロケーション・契約・課題をリアルタイムで連結する統合リレーショナルスキーマ。すべての資産をサポートするビジネスサービスにマッピング。</div>
+        </div>
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">RaptorDB Pro</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">HTAPデータベースエンジン——同一のライブデータセットでトランザクションと分析クエリを処理。ETL不要・セカンダリストアなし・データドリフトなしのリアルタイム分析。数十億レコードを推論するエージェントが必要なスピード。</div>
+        </div>
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">Workflow Data Fabric + ZCC</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">450以上のエンタープライズシステムにまたがるレプリケーション不要のフェデレーテッドクエリ。ゼロコピーコネクタが脆弱なパイプラインと古いデータを排除。ネイティブのビジネスロジックを保持したまま、ソースシステムへのライブクエリ。</div>
+        </div>
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">データカタログ + セマンティックレイヤー</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">data.worldを搭載、ネイティブ組み込み。クロスドメインの発見可能性・出所追跡・セマンティックビジネスマッピング。レプリカスナップショットではなく、ライブ運用データをカタログ化。</div>
+        </div>
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">IT-OT + サイバーフィジカル（Armis）</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">IoT・OT・医療・産業のすべての接続資産にわたるエージェントレス探索と継続的監視。AIエージェントはITレイヤーだけでなく、完全な運用環境全体を感知。</div>
+        </div>
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">グローバルデータ主権</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">数十カ国にわたるデータセンター。FedRAMP・IRAP・IL4/IL5・GDPR対応。AIネイティブスタートアップは主権的インフラを持たない。ServiceNowはエンタープライズが活動する場所で運用される。</div>
+        </div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--text-muted);margin-top:1rem;">SN Technical Foundation · pp.8–12</div>
+    </div>
+
+    <!-- DECIDE -->
+    <div style="background:var(--sn-card);border:1px solid var(--border-subtle);border-radius:14px;padding:2rem;margin-bottom:1rem;" class="reveal">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;">
+        <div style="width:44px;height:44px;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">🧠</div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;color:var(--sn-blue-light);letter-spacing:0.04em;">DECIDE</div>
+          <div style="font-size:0.78rem;color:var(--text-muted);font-family:'DM Mono',monospace;">AIをビジネス現実に根付かせる</div>
+        </div>
+      </div>
+      <p style="font-size:0.88rem;color:var(--text-secondary);line-height:1.75;margin-bottom:1.25rem;">AIモデルは確率的推測ではなく、ビジネスの説明責任と説明可能性を持って推論する必要がある。ServiceNowは任意のモデルプロバイダーをエンタープライズコンテキスト・ルール・知識に根付かせる。これはエンタープライズのためのAIアライメントだ：研究者がモデルを人間の利益に合わせるように、ServiceNowはモデルをあなたのビジネス利益に合わせる。</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.75rem;">
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">コンテキストAIグラウンディング</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">CMDB＋コンテキストグラフ＋ワークフロー履歴が、AIに誰が関与・どの資産が影響・どのポリシーが適用・過去に何が起きたかのリアルタイム認識を提供。</div>
+        </div>
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">リアルタイム ナレッジグラフ</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">人員・役割・資産・サービス・ワークフローを統合モデルに接続し、AIがオーナーシップ・依存関係・運用状態を動的にクエリ可能。</div>
+        </div>
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">マルチエージェント オーケストレーション</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">ServiceNowは2025年3月から本番環境で協調型マルチエージェントワークフローを運用。2025年5月、本番MCP・A2Aサポートを追加した最初のエンタープライズベンダー。</div>
+        </div>
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">継続的な運用学習</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">システム活動を通じて自動更新。過去の解決策と実行パスを格納し、AIが長期プロセスにわたる継続性を維持し、何が機能したか——何が失敗したかを参照可能。</div>
+        </div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--text-muted);margin-top:1rem;">SN Technical Foundation · pp.12–13</div>
+    </div>
+
+    <!-- ACT -->
+    <div style="background:var(--sn-card);border:1px solid var(--border-subtle);border-radius:14px;padding:2rem;margin-bottom:1rem;" class="reveal">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;">
+        <div style="width:44px;height:44px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">⚡</div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;color:var(--accent-gold);letter-spacing:0.04em;">ACT</div>
+          <div style="font-size:0.78rem;color:var(--text-muted);font-family:'DM Mono',monospace;">エンタープライズ全体での自律実行</div>
+        </div>
+      </div>
+      <p style="font-size:0.88rem;color:var(--text-secondary);line-height:1.75;margin-bottom:1.25rem;">ここでほとんどのAIは止まり、ServiceNowは進み続ける。考え、かつ行動するAI——信頼を損なわずに。エンタープライズAIはAIの確率的知性とワークフローの決定論的制御の両方を必要とする。20年の本番デプロイが一般的なパターンをテスト済みワークフローとしてエンコードしてきた。競合他社は顧客にロウレベルAPIに対してゼロから再構築を強いる。</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.75rem;">
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">Agent Orchestrator + Studio</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">ITヘルプデスクからCRMレコード更新まで、エンドツーエンドの自律実行。Agentic Playbookがクロスシステムワークフローをガバナンス付き再利用可能な操作としてエンコード。</div>
+        </div>
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">実行可能なエージェントツールとしてのワークフロー</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">エージェントは既存ワークフローを低レベルAPIではなく高レベル操作として呼び出す。「ユーザープロビジョニング」はすでにADアカウント・HRIS更新・管理者承認・役割ベースアクセス・通知・監査証跡をエンコード済み。</div>
+        </div>
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">ネイティブ実行としてのガバナンス</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">承認・SLA・コンプライアンスゲート・監査証跡・ロールバックはネイティブ実行プリミティブ——後付けではない。ポリシー違反は発生前に実行を阻止。</div>
+        </div>
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">App Engine + Build Agent</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">アプリ開発を数ヶ月のITプロジェクトから数日のクリエイティブな行為に変える。すべてのアプリが初日からエンタープライズグレードの信頼——セキュリティ・権限・監査証跡——を継承。シャドーITなし。</div>
+        </div>
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">Integration Hub（500以上のスポーク）</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">500以上の認定スポークとMIDサーバー、双方向・ポリシー対応接続。エージェントは、競合他社がゼロから構築しなければならないクロスシステムオーケストレーションで動作。</div>
+        </div>
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">プラットフォーム永続ステート</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">コンテキストと意思決定履歴はモデルのコンテキストウィンドウではなくRaptorDBに永続。セッションリセットなし。エージェントは数週間にわたる長期プロセスで継続性を維持。</div>
+        </div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--text-muted);margin-top:1rem;">SN Technical Foundation · pp.13–19</div>
+    </div>
+
+    <!-- GOVERN -->
+    <div style="background:var(--sn-card);border:1px solid var(--border-subtle);border-radius:14px;padding:2rem;margin-bottom:0.5rem;" class="reveal">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;">
+        <div style="width:44px;height:44px;background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">🛡️</div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;color:#F87171;letter-spacing:0.04em;">GOVERN</div>
+          <div style="font-size:0.78rem;color:var(--text-muted);font-family:'DM Mono',monospace;">エンタープライズ規模での信頼</div>
+        </div>
+      </div>
+      <p style="font-size:0.88rem;color:var(--text-secondary);line-height:1.75;margin-bottom:1.25rem;">Sense・Decide・Actは、それらをつなぐガバナンスレイヤーと同等の力しか持たない。AI Control Towerがそのレイヤーだ——アーキテクチャ全体の統合ポイント。自律性は強固なガバナンスなしには存在できない。人間の役割は業務の実行から、実行するシステムのガバナンスへとシフトする。</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.75rem;">
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">AI Control Tower（AICT）</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">ITインフラにとってのCMDBと同等のAI版。すべてのAIシステムの可視性・ガバナンス・制御の単一ペイン。内部・パートナー・サードパーティを問わず、あらゆるAIエコシステムを管理するニュートラルなオーケストレーションハブ。</div>
+        </div>
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">アイデンティティガバナンス（Veza）</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">300億以上のアクセス権限を管理。人間・マシン・AIアイデンティティにわたるアクセス関係をマッピング。すべてのAI同僚はスコープされた権限と監査可能なアイデンティティチェーンを必要とする。最小権限をリアルタイムで適用。</div>
+        </div>
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">エンタープライズセキュリティスタック</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">不変の監査証跡を持つSOC 2 Type II。多重規制コンプライアンス：GDPR・HIPAA・FedRAMP・SOX・CCPA。設定可能なデータレジデンシーと保持。実行レイヤーで適用される役割ベースアクセス制御。</div>
+        </div>
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">ミッションクリティカルな信頼性</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">99.99%稼働率。アクティブ-アクティブフェイルオーバー。サブ秒の劣化検出。ゼロダウンタイムデプロイ。分単位のRTO・秒単位のRPO。エンタープライズが自律運用でシステムを信頼できる信頼性閾値。</div>
+        </div>
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">サイバーエクスポージャー（Armis）</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">リアルタイム資産探索・脅威インテリジェンス・リスク優先付けを自動修復と連結するプロアクティブサイバーセキュリティ。IT・OT・IoT・クラウド・医療・産業にわたる統合セキュリティエクスポージャー。</div>
+        </div>
+        <div style="background:var(--sn-navy);border-radius:8px;padding:1rem;">
+          <div style="font-weight:600;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.3rem;">設計によるヒューマン・イン・ザ・ループ</div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">人間が境界を定義する。プラットフォームがそれを適用する。自律ワークフローは、人間チームが匹敵できないスピードとスケールでその境界内で動作する。自律はノーメンテナンスを意味しない。</div>
+        </div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--text-muted);margin-top:1rem;">SN Technical Foundation · pp.19–21</div>
+    </div>
+
+    <div class="callout reveal" style="border-left-color:var(--accent-gold);margin-top:2rem;">
+      <div class="callout-label" style="color:var(--accent-gold);">Gartner リスクシグナル</div>
+      <div class="callout-text">ガバナンスの課題により、2027年までにエージェント型AIベンチャーの40%以上が失敗する。AIを安全に適用するプラットフォームが勝つ。ガバナンスは変革の制約ではない——変革を持続可能にする基盤だ。</div>
+      <div class="callout-source">Gartner、SN Blueprint — Executive Brief · p.10 &nbsp;|&nbsp; Technical Foundation · p.26 &nbsp;|&nbsp; Innovation Brief · p.10 に引用</div>
+    </div>
+
+    <!-- ── 3C: PLATFORM SCALE ── -->
+    <h3 style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;margin:3.5rem 0 1rem;color:var(--text-primary);">プラットフォームスケール——複利的優位性</h3>
+    <div class="stat-grid reveal">
+      <div class="stat-card">
+        <div class="stat-number">800億+</div>
+        <div class="stat-label">年間プラットフォーム上のワークフロー数</div>
+        <div class="stat-source" onclick="scrollToSource('eb')"><div class="stat-source-dot src-eb"></div>SN Agentic Blueprint · p.6</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">6.5兆</div>
+        <div class="stat-label">年間トランザクション数、前年比約25%成長</div>
+        <div class="stat-source" onclick="scrollToSource('eb')"><div class="stat-source-dot src-eb"></div>SN Agentic Blueprint · p.6</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">85%</div>
+        <div class="stat-label">Fortune 500企業が顧客</div>
+        <div class="stat-source" onclick="scrollToSource('eb')"><div class="stat-source-dot src-eb"></div>SN Agentic Blueprint · p.6</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">98%</div>
+        <div class="stat-label">20四半期以上連続の更新率</div>
+        <div class="stat-source" onclick="scrollToSource('eb')"><div class="stat-source-dot src-eb"></div>SN Agentic Blueprint · p.6</div>
+      </div>
+    </div>
+
+    <!-- ── 3D: CUSTOMER STORIES ── -->
+    <div style="margin:4rem 0 1rem;">
+      <div class="section-label reveal" style="font-size:0.68rem;">3C · 顧客参照事例</div>
+      <h3 style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.5rem;margin-bottom:0.5rem;color:var(--text-primary);" class="reveal">実践での実績</h3>
+      <p style="color:var(--text-secondary);font-size:0.9rem;max-width:680px;line-height:1.8;margin-bottom:2rem;" class="reveal">アーキテクチャはそれが生み出す成果と同等の説得力しか持たない。5つのエンタープライズドメインにわたるリアルな成果——各事例をクリックして詳細ケーススタディを読む。</p>
+    </div>
+
+    <!-- IT OPERATIONS -->
+    <div style="margin-bottom:1rem;" class="reveal">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;color:var(--sn-green);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px;">🖥 自律型IT</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0.75rem;">
+        <a href="https://www.servicenow.com/customers/astrazeneca.html" target="_blank" rel="noopener" style="text-decoration:none;">
+          <div class="outcome-item" style="border-radius:10px;border:1px solid var(--border-subtle);cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--sn-green)'" onmouseout="this.style.borderColor='var(--border-subtle)'">
+            <div class="outcome-domain" style="justify-content:space-between;">AstraZeneca <span style="font-size:0.7rem;color:var(--text-muted);">↗ ケーススタディ</span></div>
+            <div class="outcome-result"><strong style="color:var(--sn-green);">年間3万時間以上</strong>を回収。自律型ITトリアージと解決により、チームが戦略的研究に集中できる。</div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--text-muted);margin-top:0.5rem;">SN EB · p.9 | 製薬 · グローバル</div>
+          </div>
+        </a>
+        <a href="https://www.servicenow.com/customers/adobe.html" target="_blank" rel="noopener" style="text-decoration:none;">
+          <div class="outcome-item" style="border-radius:10px;border:1px solid var(--border-subtle);cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--sn-green)'" onmouseout="this.style.borderColor='var(--border-subtle)'">
+            <div class="outcome-domain" style="justify-content:space-between;">Adobe <span style="font-size:0.7rem;color:var(--text-muted);">↗ ケーススタディ</span></div>
+            <div class="outcome-result"><strong style="color:var(--sn-green);">25%高速化</strong>した障害解決。最良のインシデントは発生しないもの——AIが中断前に予測・修復。</div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--text-muted);margin-top:0.5rem;">SN EB · p.9 | テクノロジー · 米国</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- CRM -->
+    <div style="margin-bottom:1rem;" class="reveal">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;color:var(--sn-blue-light);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.75rem;">💼 自律型CRM・収益</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0.75rem;">
+        <a href="https://www.servicenow.com/customers/pure-storage.html" target="_blank" rel="noopener" style="text-decoration:none;">
+          <div class="outcome-item" style="border-radius:10px;border:1px solid var(--border-subtle);cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--sn-blue-light)'" onmouseout="this.style.borderColor='var(--border-subtle)'">
+            <div class="outcome-domain" style="justify-content:space-between;color:var(--sn-blue-light);">Pure Storage <span style="font-size:0.7rem;color:var(--text-muted);">↗ ケーススタディ</span></div>
+            <div class="outcome-result"><strong style="color:var(--sn-blue-light);">7倍高速化</strong>したケース解決。AIエージェントが単一プラットフォームでフロント・ミドル・バックオフィスにわたって販売・サービス・サポート。</div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--text-muted);margin-top:0.5rem;">SN EB · p.9 | テクノロジー · 米国</div>
+          </div>
+        </a>
+        <a href="https://www.servicenow.com/customers/bell.html" target="_blank" rel="noopener" style="text-decoration:none;">
+          <div class="outcome-item" style="border-radius:10px;border:1px solid var(--border-subtle);cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--sn-blue-light)'" onmouseout="this.style.borderColor='var(--border-subtle)'">
+            <div class="outcome-domain" style="justify-content:space-between;color:var(--sn-blue-light);">Bell Canada <span style="font-size:0.7rem;color:var(--text-muted);">↗ ケーススタディ</span></div>
+            <div class="outcome-result"><strong style="color:var(--sn-blue-light);">90%</strong>のディスパッチ関連タスクを自動化。顧客がより速い回答を取得。フィールドチームが重要なことにより多くの時間を使用。</div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--text-muted);margin-top:0.5rem;">SN EB · p.9 | 通信 · カナダ</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- EX -->
+    <div style="margin-bottom:1rem;" class="reveal">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;color:var(--accent-gold);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.75rem;">👥 自律型従業員体験</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0.75rem;">
+        <a href="https://www.servicenow.com/customers/siemens.html" target="_blank" rel="noopener" style="text-decoration:none;">
+          <div class="outcome-item" style="border-radius:10px;border:1px solid var(--border-subtle);cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent-gold)'" onmouseout="this.style.borderColor='var(--border-subtle)'">
+            <div class="outcome-domain" style="justify-content:space-between;color:var(--accent-gold);">Siemens <span style="font-size:0.7rem;color:var(--text-muted);">↗ ケーススタディ</span></div>
+            <div class="outcome-result"><strong style="color:var(--accent-gold);">月間21万件</strong>のチケットを自律的に解決。HRが人間の介入なしに70%以上の問い合わせを解決。</div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--text-muted);margin-top:0.5rem;">SN EB · p.9 | 製造 · ドイツ</div>
+          </div>
+        </a>
+        <a href="https://www.servicenow.com/customers/eaton.html" target="_blank" rel="noopener" style="text-decoration:none;">
+          <div class="outcome-item" style="border-radius:10px;border:1px solid var(--border-subtle);cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent-gold)'" onmouseout="this.style.borderColor='var(--border-subtle)'">
+            <div class="outcome-domain" style="justify-content:space-between;color:var(--accent-gold);">Eaton <span style="font-size:0.7rem;color:var(--text-muted);">↗ ケーススタディ</span></div>
+            <div class="outcome-result"><strong style="color:var(--accent-gold);">ワークフロー処理能力2倍</strong>、人員増加なし。367以上のアプリを行き来する日々の手間をAIが代替。</div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--text-muted);margin-top:0.5rem;">SN EB · p.9 | 産業 · 米国</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- RISK -->
+    <div style="margin-bottom:1rem;" class="reveal">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;color:#F87171;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.75rem;">🔐 自律型リスク・セキュリティ</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0.75rem;">
+        <a href="https://www.servicenow.com/customers/honeywell.html" target="_blank" rel="noopener" style="text-decoration:none;">
+          <div class="outcome-item" style="border-radius:10px;border:1px solid var(--border-subtle);cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='#F87171'" onmouseout="this.style.borderColor='var(--border-subtle)'">
+            <div class="outcome-domain" style="justify-content:space-between;color:#F87171;">Honeywell <span style="font-size:0.7rem;color:var(--text-muted);">↗ ケーススタディ</span></div>
+            <div class="outcome-result"><strong style="color:#F87171;">75%高速化</strong>したコンプライアンス認証。AIを活用した業務スピードにガバナンスが追随。</div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--text-muted);margin-top:0.5rem;">SN EB · p.10 | 産業 · 米国</div>
+          </div>
+        </a>
+        <a href="https://www.servicenow.com/customers/avalara.html" target="_blank" rel="noopener" style="text-decoration:none;">
+          <div class="outcome-item" style="border-radius:10px;border:1px solid var(--border-subtle);cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='#F87171'" onmouseout="this.style.borderColor='var(--border-subtle)'">
+            <div class="outcome-domain" style="justify-content:space-between;color:#F87171;">Avalara <span style="font-size:0.7rem;color:var(--text-muted);">↗ ケーススタディ</span></div>
+            <div class="outcome-result"><strong style="color:#F87171;">月間800時間</strong>を節約。コンプライアンス・セキュリティチームが、ビジネス全体がAIから得るスピードに追いつく。</div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--text-muted);margin-top:0.5rem;">SN EB · p.10 | 税務テック · 米国</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- SCENARIO WALKTHROUGH -->
+    <div style="margin:3rem 0 1rem;">
+      <h3 style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:1rem;color:var(--text-primary);">参照シナリオ：RSU問題——アーキテクチャが実際に行うこと</h3>
+      <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.75;margin-bottom:1.5rem;">AIプラットフォームの最も有益なテストはデモではなく、実際のお金・複数ベンダー・監査要件を含む規制されたクロスシステムワークフローだ。このシナリオは、アーキテクチャが重要な理由を正確に示す。</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-subtle);border-radius:12px;overflow:hidden;margin-bottom:0.5rem;" class="reveal">
+      <div style="background:var(--sn-card);padding:1.5rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--accent-rose);letter-spacing:0.1em;margin-bottom:0.5rem;">スタンドアロンLLM</div>
+        <div style="font-size:0.82rem;color:var(--text-secondary);line-height:1.7;">RSUベスティングロジックと源泉徴収計算を説明する。「なぜ株式数が間違っているのか？」には答えられない——従業員のエンティティ・税管轄・株式プランバージョンへのアクセスがない。説明できる。解決できない。</div>
+      </div>
+      <div style="background:var(--sn-card);padding:1.5rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--accent-rose);letter-spacing:0.1em;margin-bottom:0.5rem;">デスクトップエージェント</div>
+        <div style="font-size:0.82rem;color:var(--text-secondary);line-height:1.7;">疑わしい源泉徴収選択に気づくが理由を確認できない——エンタープライズのシステムオブレコードへのアクセスがない。推測し、複数チームに並列でメッセージを送る。個人の株式取引詳細を含む下書きを作成。ノイズ・リスク・恥——高速で。行動できる。ガバナンスできない。</div>
+      </div>
+      <div style="background:var(--sn-mid);padding:1.5rem;border:1px solid var(--border);">
+        <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--sn-green);letter-spacing:0.1em;margin-bottom:0.5rem;">SERVICENOW</div>
+        <div style="font-size:0.82rem;color:var(--text-secondary);line-height:1.7;"><strong style="color:var(--sn-green);">Sense：</strong>HR・給与・株式・税務・証券会社をまたいでアイデンティティを解決。<strong style="color:var(--accent-gold);">Decide：</strong>モデル下で権限を適用——許可されていないことは表示・実行不可。<strong style="color:var(--sn-blue-light);">Act：</strong>複数ベンダーにまたがるガバナンス付きワークフロー、修正を検証、職務分離を適用。<strong style="color:#F87171;">Govern：</strong>完全な監査証跡——誰が開始し、何が変更され、誰が承認し、SLAに準拠。根本原因：クロスエンティティ転送。<em>解決済み。</em></div>
+      </div>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--text-muted);">SN Technical Foundation · pp.17–18 &nbsp;|&nbsp; Executive Brief · pp.7–8</div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 3D: WHERE SERVICENOW IS GOING -->
+<section id="direction">
+  <div class="section-inner">
+    <div class="section-label reveal" style="font-size:0.68rem;">3D · 戦略的方向性</div>
+    <h2 class="section-title reveal">ServiceNowが<br>目指す次の段階</h2>
+    <p class="section-desc reveal">AIはすべての製品・機能・プラットフォームとのインタラクションに組み込まれる——後付けではなく、最初から。5つの戦略的な動きが、ServiceNowの複利的優位性の次の層を定義する。</p>
+
+    <div class="imperative-grid reveal">
+
+      <div class="imperative-card">
+        <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--sn-green);letter-spacing:0.1em;margin-bottom:0.6rem;">01 · ACTの拡大</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;color:var(--text-primary);">新ドメイン、複利的優位性</div>
+        <div style="font-size:0.82rem;color:var(--text-secondary);line-height:1.65;">Finance・Legal・Procurement・Supply Chainが次のフロンティアだ。新しいドメインが加わるたびにエンタープライズコンテキストが積み上がり、実行優位性が強化され、すでにプラットフォーム上にいる顧客への価値が複利で増大する。</div>
+        <div class="stat-source" style="margin-top:0.75rem;"><span class="stat-source-dot src-eb"></span>SN Technical Foundation · p.26</div>
+      </div>
+
+      <div class="imperative-card">
+        <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--sn-green);letter-spacing:0.1em;margin-bottom:0.6rem;">02 · SENSEの深化</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;color:var(--text-primary);">実行のたびに精度が上がる</div>
+        <div style="font-size:0.82rem;color:var(--text-secondary);line-height:1.65;">CMDB・コンテキストグラフ・ワークフロー履歴を通じたAIグラウンディングは、実行のたびに精度が向上する複利的差別化要素だ。ArmisによるサイバーアセットへのSENSE拡張が、競合には再現できない組織的記憶を生み出す。</div>
+        <div class="stat-source" style="margin-top:0.75rem;"><span class="stat-source-dot src-eb"></span>SN Technical Foundation · p.26</div>
+      </div>
+
+      <div class="imperative-card" style="border-color:rgba(0,199,177,0.25);">
+        <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--sn-green);letter-spacing:0.1em;margin-bottom:0.6rem;">03 · AI フロントドア</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;color:var(--text-primary);">1つのインターフェース。すべてのシステム。</div>
+        <div style="font-size:0.82rem;color:var(--text-secondary);line-height:1.65;">367以上のアプリという複雑性を1つのフロントドアに集約する会話型AIインターフェース——IT・HR・Finance・その先まで。その中で働く人々にとって、パッチワーク型エンタープライズが消える。</div>
+        <div class="stat-source" style="margin-top:0.75rem;"><span class="stat-source-dot src-eb"></span>SN Executive Brief · p.11</div>
+      </div>
+
+      <div class="imperative-card">
+        <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--sn-green);letter-spacing:0.1em;margin-bottom:0.6rem;">04 · AIネイティブデリバリー</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;color:var(--text-primary);">より速くイノベーションを届ける</div>
+        <div style="font-size:0.82rem;color:var(--text-secondary);line-height:1.65;">AIネイティブなエンジニアリング手法・価格体系・パッケージング、そして顧客へのイノベーション提供を加速するモダンなテックスタック。シンプルな製品・高速なデプロイ・より早く成果を実感できる方法。</div>
+        <div class="stat-source" style="margin-top:0.75rem;"><span class="stat-source-dot src-eb"></span>SN Executive Brief · p.11</div>
+      </div>
+
+      <div class="imperative-card">
+        <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--sn-green);letter-spacing:0.1em;margin-bottom:0.6rem;">05 · 信頼が競争優位に</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;color:var(--text-primary);">ガバナンスこそがアクセラレーター</div>
+        <div style="font-size:0.82rem;color:var(--text-secondary);line-height:1.65;">AIエージェントが増殖するにつれ、ガバナンスが競合優位の決定要因となる。すべてのAI同僚・すべての接続デバイス・すべてのマシン間インタラクションに、監査可能なアイデンティティチェーンとスコープされた権限が必要だ。</div>
+        <div class="stat-source" style="margin-top:0.75rem;"><span class="stat-source-dot src-eb"></span>SN Technical Foundation · p.26</div>
+      </div>
+
+    </div>
+
+    <div class="callout reveal">
+      <div class="callout-label">AI フロントドア — SN Executive Brief · p.11</div>
+      <div class="callout-text">「ServiceNowは、その複雑性を1つのフロントドアに集約する会話型AIインターフェースを構築している。IT・HR・Finance・その先にわたる質問・アクション・問題解決のための1つの場所——エンタープライズコンテキスト・権限・ワークフローに根差した。その中で働く人々にとって、パッチワーク型エンタープライズが消える。」</div>
+      <div class="callout-source">SN Blueprint for Agentic Business — Executive Brief · p.11 &nbsp;|&nbsp; Technical Foundation · p.26</div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 4: IMPERATIVES -->
+<section id="imperatives" class="bg-alt">
+  <div class="section-inner">
+    <div class="section-label reveal">04 · 組織的優先課題</div>
+    <h2 class="section-title reveal">組織が取り組むべき<br>4つの必須事項</h2>
+    <p class="section-desc reveal">McKinseyの2026年調査が、AIパイロットからエージェント型エンタープライズへの移行に必要な構造的要件を特定。それぞれが具体的なリーダーシップアクションとServiceNow機能にマッピングされる。</p>
+
+    <div class="imperative-grid reveal">
+      <div class="imperative-card">
+        <div class="imperative-num">優先課題 01</div>
+        <div class="imperative-title">AIをCスイート全体のアジェンダに</div>
+        <div class="imperative-body">6社に1社しか明確なCレベルAI責任者がいない。CTOが主導すると導入が加速するが——Cスイートの全役割が固有の責任を持つ。</div>
+        <ul class="imperative-bullets">
+          <li>CEO：「AI目的」マニフェストの策定</li>
+          <li>CFO：指標を従業員一人当たり収益に転換</li>
+          <li>CTO：AIメッシュアーキテクチャの所有</li>
+          <li>CHRO：リスキリング＋人間-エージェント役割設計のリード</li>
+          <li>最高イノベーション責任者：パイロットをエンタープライズスケールへ橋渡し</li>
+        </ul>
+        <div class="stat-source" style="margin-top:1rem" onclick="scrollToSource('mk')"><div class="stat-source-dot src-mk"></div>McKinsey SoO 2026 · pp.9–10</div>
+      </div>
+
+      <div class="imperative-card">
+        <div class="imperative-num">優先課題 02</div>
+        <div class="imperative-title">ワークフローをエンドツーエンドで再設計</div>
+        <div class="imperative-body">ドメイン全体を再設計する組織が最大のEBIT効果を得る。従来の機能型から成果指向型の運用モデルへ——よりフラットで、速く、流動的に。</div>
+        <ul class="imperative-bullets">
+          <li>業務を価値・反復マトリクスにマッピング</li>
+          <li>ハイブリッドな人間-エージェントチームのために構造を再設計</li>
+          <li>AIアウトプットの明確なオーナーシップを確立</li>
+          <li>透明なデータパイプラインと評価を構築</li>
+        </ul>
+        <div class="stat-source" style="margin-top:1rem" onclick="scrollToSource('mk')"><div class="stat-source-dot src-mk"></div>McKinsey SoO 2026 · pp.10–11</div>
+      </div>
+
+      <div class="imperative-card">
+        <div class="imperative-num">優先課題 03</div>
+        <div class="imperative-title">AIリテラシーをスケールで構築</div>
+        <div class="imperative-body">最大の障壁は技術ではなく恐怖だ。46%がAI自体への懸念を挙げる。透明性・投資・測定可能な学習プログラムで対処。</div>
+        <ul class="imperative-bullets">
+          <li>週次AIラーニングラボを開始</li>
+          <li>段階的なリテラシーを設計：基礎 → オーケストレーション</li>
+          <li>具体的目標を設定：従業員一人当たり週4時間の解放</li>
+          <li>導入を測定——アクティブユーザー数、拡張タスク数</li>
+          <li>意思決定権を持つ本物の倫理委員会を構築</li>
+        </ul>
+        <div class="stat-source" style="margin-top:1rem" onclick="scrollToSource('mk')"><div class="stat-source-dot src-mk"></div>McKinsey SoO 2026 · pp.11–13 &nbsp;|&nbsp; Innovation Brief · p.14</div>
+      </div>
+
+      <div class="imperative-card">
+        <div class="imperative-num">優先課題 04</div>
+        <div class="imperative-title">初日からデプロイするものをガバナンス</div>
+        <div class="imperative-body">ガバナンスの欠如により、2027年までにエージェント型AIベンチャーの40%が失敗する。ガバナンスはブレーキではない——持続可能なスケールを可能にするアクセラレーターだ。</div>
+        <ul class="imperative-bullets">
+          <li>AIリソースオフィスを設立（IT＋HR共同所有）</li>
+          <li>エージェントの役割チャーターとアクセス範囲を定義</li>
+          <li>人間対エージェントの説明責任にRACIを実装</li>
+          <li>完全な監査証跡を持つAI Control Towerを展開</li>
+          <li>エージェントのパフォーマンスを人間と同様に管理</li>
+        </ul>
+        <div class="stat-source" style="margin-top:1rem" onclick="scrollToSource('ib')"><div class="stat-source-dot src-ib"></div>Innovation Brief · pp.14–15 &nbsp;|&nbsp; SN Blueprint · pp.10–11</div>
+      </div>
+    </div>
+
+    <div class="callout reveal">
+      <div class="callout-label">投資比率 — McKinsey</div>
+      <div class="callout-text">技術に1ドル費やすごとに、人材に5ドルを費やすべきだ。AI変革は技術の課題と同様に、人間変革の課題でもある。</div>
+      <div class="callout-source">McKinsey State of Organizations 2026 · p.8（McKinsey Gen AI Inflection Point, 2024年8月 引用）</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 5: PLAYBOOK -->
+<section id="playbook">
+  <div class="section-inner">
+    <div class="section-label reveal">05 · 実行プレイブック</div>
+    <h2 class="section-title reveal">意図からエージェント型エンタープライズへ<br>の7フェーズ</h2>
+    <p class="section-desc reveal">各フェーズは前のフェーズを基盤とする。各フェーズは明確な担当者・時間軸・測定可能な成功シグナルを持つ。これはServiceNowのAgentic BlueprintとBrian SolisのA→A→X²フレームワークの統合だ。</p>
+
+    <div class="phase-list reveal">
+      <div class="phase-item">
+        <div class="phase-num">01</div>
+        <div class="phase-content">
+          <div class="phase-title">意図の定義 <span class="phase-horizon">30日</span></div>
+          <div class="phase-desc">Cスイートが共同署名する1ページの「AI目的」マニフェストを作成。「なぜAI＋人間か？なぜ自動化＋拡張か？なぜ今か？」に答える。探索と成長に資金を提供する効率化——バイモーダルな視点でビジネスケースを確立。</div>
+          <div class="phase-signal"><strong>成功シグナル：</strong>マニフェストが存在する。取締役会に報告済み。最低1名のCレベル担当者が指名されている。</div>
+        </div>
+      </div>
+
+      <div class="phase-item">
+        <div class="phase-num">02</div>
+        <div class="phase-content">
+          <div class="phase-title">業務マッピング＋価値の特定 <span class="phase-horizon">60日</span></div>
+          <div class="phase-desc">2次元でワークフローを監査：頻度/工数 vs. 戦略的人間価値。各ワークフローを自動化・拡張・保護・廃止の象限に割り当てる。3つのライトハウスパイロット候補を特定。</div>
+          <div class="phase-signal"><strong>成功シグナル：</strong>優先ワークフローマップ完成。3つのパイロット候補が選定・共有されている。</div>
+        </div>
+      </div>
+
+      <div class="phase-item">
+        <div class="phase-num">03</div>
+        <div class="phase-content">
+          <div class="phase-title">人間＋エージェント役割の設計 <span class="phase-horizon">60日</span></div>
+          <div class="phase-desc">人間とエージェントをペアリングする未来の職務記述書を作成。各役割の「人間対AI比率」を推定。すべての対象ワークフローで人間対エージェントの説明責任を明確にするRACIチャートを構築。</div>
+          <div class="phase-signal"><strong>成功シグナル：</strong>5以上の未来の役割プロファイルが定義されている。ITとHRが所有権で合意している。</div>
+        </div>
+      </div>
+
+      <div class="phase-item">
+        <div class="phase-num">04</div>
+        <div class="phase-content">
+          <div class="phase-title">AIリテラシーの構築 <span class="phase-horizon">90日 · 継続</span></div>
+          <div class="phase-desc">不要な会議に代わる週次セッションでAIラーニングラボを開始。段階的コースを設計：基礎プロンプティング → ワークフローオーケストレーション → エージェント管理。文化的コミットメントを示すためパフォーマンス管理に連動。</div>
+          <div class="phase-signal"><strong>成功シグナル：</strong>Tier 1を完了した従業員の割合。再投資された時間が追跡・報告されている。</div>
+        </div>
+      </div>
+
+      <div class="phase-item">
+        <div class="phase-num">05</div>
+        <div class="phase-content">
+          <div class="phase-title">A→Aパイロットの実施 <span class="phase-horizon">90日</span></div>
+          <div class="phase-desc">フェーズ2から自動化1つ＋拡張1つのパイロットを選択。30日間のA/B比較を実施：手動ベースライン vs. AI専用自動化 vs. 人間＋AI拡張。3つの指標を追跡：節約時間・品質向上・再展開された新規能力。</div>
+          <div class="phase-signal"><strong>成功シグナル：</strong>測定可能なROIが実証されている。取締役会向けナラティブ準備完了。スケールアッププランが起草されている。</div>
+        </div>
+      </div>
+
+      <div class="phase-item">
+        <div class="phase-num">06</div>
+        <div class="phase-content">
+          <div class="phase-title">スケール＋ガバナンス <span class="phase-horizon">6ヶ月</span></div>
+          <div class="phase-desc">IT＋HR共同のAIリソースオフィスを設立。AI Control Towerを展開。エージェントのオンボーディング・コンプライアンス・パフォーマンス管理・廃止基準を標準化。すべての新規エージェントはデプロイ前に正式な役割チャーターに従う。</div>
+          <div class="phase-signal"><strong>成功シグナル：</strong>ガバナンスフレームワークが稼働中。エージェントレジストリが確立されている。コンプライアンスが監査可能。</div>
+        </div>
+      </div>
+
+      <div class="phase-item">
+        <div class="phase-num">07</div>
+        <div class="phase-content">
+          <div class="phase-title">維持・最適化・再投資 <span class="phase-horizon">継続</span></div>
+          <div class="phase-desc">人間だけでなく、エージェントのパフォーマンス管理に焦点を移す。定期的なオーケストレーションシステムを通じてエージェントのパフォーマンスを監視・測定・改善。解放された能力を探索に再投資：以前は不可能だった新製品・新サービス・新しい収益源。</div>
+          <div class="phase-signal"><strong>成功シグナル：</strong>従業員一人当たり収益が上昇中。イノベーションバックログが成長中。エージェントが積極的に廃止・置換されている。</div>
+        </div>
+      </div>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--text-muted);">Innovation Brief: Work Reimagined · Phases 1–7, pp.11–15 &nbsp;|&nbsp; SN Blueprint — Executive Brief · pp.8–11</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 6: 90-DAY ACTION -->
+<section id="action" class="bg-alt">
+  <div class="section-inner">
+    <div class="section-label reveal">06 · アクション呼びかけ</div>
+    <h2 class="section-title reveal">今後90日間のアクション</h2>
+    <p class="section-desc reveal">差別化の窓は開いている——しかし狭まっている。AIパイオニアは毎四半期引き離しを広げている。問いは変革するかどうかではなく、主導するかどうかだ。</p>
+
+    <div class="action-cols reveal">
+      <div class="action-col">
+        <div class="action-header"><div class="action-header-dot"></div> 今週</div>
+        <div class="action-body">
+          <div class="action-item">CレベルAI責任者を特定——存在しない場合は今日指名する</div>
+          <div class="action-item">現在のAIポートフォリオを監査：実際にスケールしたパイロットはいくつか？</div>
+          <div class="action-item">クロスファンクショナルセッションをスケジュール：CEO・CTO・CFO・CHRO——一室、一アジェンダ</div>
+          <div class="action-item">リーダーシップチームと業務・価値マトリクスをレビュー</div>
+        </div>
+      </div>
+      <div class="action-col">
+        <div class="action-header"><div class="action-header-dot" style="background:var(--sn-blue-light)"></div> 今月</div>
+        <div class="action-body">
+          <div class="action-item">「AI目的」マニフェストを起草——1ページ、Cスイート共同署名</div>
+          <div class="action-item">トップ10ワークフローを業務・価値マトリクスにマッピング</div>
+          <div class="action-item">最初のライトハウスパイロットを特定：自動化1つ、拡張1つ</div>
+          <div class="action-item">3つの優先役割の人間対AI比率フレームワークを定義</div>
+        </div>
+      </div>
+      <div class="action-col">
+        <div class="action-header"><div class="action-header-dot" style="background:var(--accent-gold)"></div> 今四半期</div>
+        <div class="action-body">
+          <div class="action-item">AIラーニングラボを開始——リテラシーから始め、オーケストレーションへと発展</div>
+          <div class="action-item">厳格な測定で最初の30日間A/Bパイロットを実施</div>
+          <div class="action-item">IT＋HR共同AIリソースオフィスを設立</div>
+          <div class="action-item">自社環境のAI Control TowerアーキテクチャについてServiceNowと相談</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout reveal" style="border-left-color:var(--sn-green); margin-top:2.5rem;">
+      <div class="callout-label">変わらない原則</div>
+      <div class="callout-text">「自律はノーメンテナンスを意味しない。人々が本当に重要な業務に取り組めるよう、日常業務をインテリジェントに委任することを意味する。すべての自律ワークフローは、人々に時間・判断力・集中力を返すために設計されている。技術はより賢くなる。業務はよりヒューマンになる。」</div>
+      <div class="callout-source">SN Blueprint for Agentic Business — Executive Brief · p.11</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SOURCES -->
+<section id="sources">
+  <div class="section-inner">
+    <div class="section-label reveal">出典・参考文献</div>
+    <h2 class="section-title reveal">ソース文書</h2>
+    <p class="section-desc reveal">このプレイブックのすべてのインサイトは、これら3つの主要ソースに基づく。各引用はソースコードとページ番号を参照しており、直接確認可能。</p>
+
+    <div class="legend reveal">
+      <div class="legend-item"><div class="legend-dot src-eb"></div><span style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text-muted)">SN EB</span> = ServiceNow エグゼクティブブリーフ</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#A78BFA"></div><span style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text-muted)">SN TF</span> = ServiceNow テクニカルファンデーション</div>
+      <div class="legend-item"><div class="legend-dot src-ib"></div><span style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text-muted)">SN IB</span> = ServiceNow イノベーションブリーフ</div>
+      <div class="legend-item"><div class="legend-dot src-mk"></div><span style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text-muted)">MK</span> = McKinsey 組織の現状</div>
+    </div>
+
+    <div class="sources-grid reveal" style="grid-template-columns:repeat(2,1fr);">
+      <div class="source-card" id="src-eb">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:0;">
+          <div class="source-badge badge-eb"><div class="legend-dot src-eb"></div>Primary · SN EB</div>
+          <a href="https://servicenow.seismic.com/Link/Content/DC4dJBQCFpDBMG7C3RJpM9bjb6mB" target="_blank" rel="noopener" style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--sn-green);text-decoration:none;white-space:nowrap;padding:4px 10px;border:1px solid rgba(0,199,177,0.3);border-radius:100px;transition:all 0.2s;" onmouseover="this.style.background='rgba(0,199,177,0.1)'" onmouseout="this.style.background=''">開く ↗</a>
+        </div>
+        <div class="source-name" style="margin-top:0.75rem;">ServiceNow's Blueprint for Agentic Business：エグゼクティブブリーフ</div>
+        <div class="source-author">ServiceNow, Inc. · © 2026 · 11ページ</div>
+        <div class="source-pages-label">参照した主要ページ</div>
+        <div class="source-page-list">
+          <div class="source-page-item"><div class="page-num">p.3</div><div class="page-topic">考えるAI、行動するワークフロー——核心的テーゼ</div></div>
+          <div class="source-page-item"><div class="page-num">p.4</div><div class="page-topic">Jensen Huang引用；業界が間違った問題を解決している</div></div>
+          <div class="source-page-item"><div class="page-num">p.5</div><div class="page-topic">GPS対航空管制のアナロジー；競合環境</div></div>
+          <div class="source-page-item"><div class="page-num">p.6</div><div class="page-topic">複利的優位性；800億以上のワークフロー；Fortune 500の85%</div></div>
+          <div class="source-page-item"><div class="page-num">p.7</div><div class="page-topic">AI Control Tower；ガバナンスOS；オープンバイデザインアーキテクチャ</div></div>
+          <div class="source-page-item"><div class="page-num">p.8–9</div><div class="page-topic">Sense–Decide–Act–Governフレームワーク；ドメイン成果</div></div>
+          <div class="source-page-item"><div class="page-num">p.10</div><div class="page-topic">Gartner 40%失敗予測；競争優位としてのガバナンス</div></div>
+          <div class="source-page-item"><div class="page-num">p.11</div><div class="page-topic">AI Front Door；「自律はノーメンテナンスを意味しない」</div></div>
+        </div>
+      </div>
+
+      <div class="source-card" id="src-tf">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:0;">
+          <div class="source-badge" style="background:rgba(167,139,250,0.12);color:#A78BFA;border:1px solid rgba(167,139,250,0.25);"><div class="legend-dot" style="background:#A78BFA"></div>Primary · SN TF</div>
+          <a href="https://servicenow.seismic.com/Link/Content/DC4dJBQCFpDBMG7C3RJpM9bjb6mB" target="_blank" rel="noopener" style="font-family:'DM Mono',monospace;font-size:0.65rem;color:#A78BFA;text-decoration:none;white-space:nowrap;padding:4px 10px;border:1px solid rgba(167,139,250,0.3);border-radius:100px;transition:all 0.2s;" onmouseover="this.style.background='rgba(167,139,250,0.1)'" onmouseout="this.style.background=''">開く ↗</a>
+        </div>
+        <div class="source-name" style="margin-top:0.75rem;">ServiceNow's Blueprint for Agentic Business：テクニカルファンデーション</div>
+        <div class="source-author">ServiceNow, Inc. · © 2026 · 26ページ</div>
+        <div class="source-pages-label" style="margin-top:1rem;">参照した主要ページ</div>
+        <div class="source-page-list">
+          <div class="source-page-item"><div class="page-num">p.4–5</div><div class="page-topic">アーキテクチャの断片化；応用AIと未加工知性のテーゼ</div></div>
+          <div class="source-page-item"><div class="page-num">p.6–7</div><div class="page-topic">GPS対ATCのアナロジー；オープンプラットフォーム——あらゆるAI・データ・クラウド</div></div>
+          <div class="source-page-item"><div class="page-num">p.8–12</div><div class="page-topic">SENSE：CSDM・CMDB・RaptorDB・Workflow Data Fabric・ZCC・data.world・IT-OT・データ主権</div></div>
+          <div class="source-page-item"><div class="page-num">p.12–13</div><div class="page-topic">DECIDE：コンテキストグラウンディング・ナレッジグラフ・マルチエージェントオーケストレーション・MCP/A2A</div></div>
+          <div class="source-page-item"><div class="page-num">p.13–19</div><div class="page-topic">ACT：ワークフローエンジン・ネイティブ実行としてのガバナンス・Integration Hub・App Engine</div></div>
+          <div class="source-page-item"><div class="page-num">p.19–21</div><div class="page-topic">GOVERN：AI Control Tower・Vezaアイデンティティ・Armisサイバーエクスポージャー・99.99%稼働率</div></div>
+          <div class="source-page-item"><div class="page-num">p.22–25</div><div class="page-topic">競合分析：LLM・Vibe Coding・データプラットフォーム・デジタルワーカー/OpenClaw</div></div>
+          <div class="source-page-item"><div class="page-num">p.25–26</div><div class="page-topic">戦略ロードマップ：ACTの拡大・SENSEの深化・AI Front Door・AIネイティブデリバリー</div></div>
+        </div>
+      </div>
+
+      <div class="source-card" id="src-sn-ib">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:0;">
+          <div class="source-badge badge-ib"><div class="legend-dot src-ib"></div>Primary · SN IB</div>
+          <a href="https://www.servicenow.com/in/standard/resource-center/white-paper/wp-innovation-brief-work-reimagined.html" target="_blank" rel="noopener" style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--sn-blue-light);text-decoration:none;white-space:nowrap;padding:4px 10px;border:1px solid rgba(56,189,248,0.3);border-radius:100px;transition:all 0.2s;" onmouseover="this.style.background='rgba(56,189,248,0.1)'" onmouseout="this.style.background=''">開く ↗</a>
+        </div>
+        <div class="source-name" style="margin-top:0.75rem;">Innovation Brief：指数的パフォーマンスのための人間＋AI Blueprint</div>
+        <div class="source-author">Brian Solis、ServiceNow グローバルイノベーション責任者 · 21ページ</div>
+        <div class="source-pages-label" style="margin-top:1rem;">参照した主要ページ</div>
+        <div class="source-page-list">
+          <div class="source-page-item"><div class="page-num">p.10</div><div class="page-topic">エージェント型AI失敗に関するGartnerの警告；代替 vs. 拡張のシフト</div></div>
+          <div class="source-page-item"><div class="page-num">p.11</div><div class="page-topic">A→A→X²フレームワーク概要；指数的パフォーマンスモデル</div></div>
+          <div class="source-page-item"><div class="page-num">p.12</div><div class="page-topic">フェーズ1：意図の定義；バイモーダルアプローチ；BCG 60%リターン；PwC 3倍収益</div></div>
+          <div class="source-page-item"><div class="page-num">p.13</div><div class="page-topic">フェーズ2：業務・価値マトリクス；自動化/拡張/保護/廃止</div></div>
+          <div class="source-page-item"><div class="page-num">p.14</div><div class="page-topic">フェーズ3：人間＋エージェント役割設計；人間対AI比率</div></div>
+          <div class="source-page-item"><div class="page-num">p.14</div><div class="page-topic">フェーズ4：AIラーニングラボ；フェーズ5：A→Aパイロット設計</div></div>
+          <div class="source-page-item"><div class="page-num">p.15</div><div class="page-topic">フェーズ6：スケール＋ガバナンス；AIリソースオフィス（IT＋HR）</div></div>
+          <div class="source-page-item"><div class="page-num">p.15</div><div class="page-topic">フェーズ7：運用インテリジェンスの維持；AIライフサイクル管理</div></div>
+        </div>
+      </div>
+
+      <div class="source-card" id="src-mk">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:0;">
+          <div class="source-badge badge-mk"><div class="legend-dot src-mk"></div>Primary · MK</div>
+          <a href="https://www.mckinsey.com/capabilities/people-and-organizational-performance/our-insights/the-state-of-organizations" target="_blank" rel="noopener" style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--accent-gold);text-decoration:none;white-space:nowrap;padding:4px 10px;border:1px solid rgba(245,158,11,0.3);border-radius:100px;transition:all 0.2s;" onmouseover="this.style.background='rgba(245,158,11,0.1)'" onmouseout="this.style.background=''">開く ↗</a>
+        </div>
+        <div class="source-name" style="margin-top:0.75rem;">The State of Organizations 2026</div>
+        <div class="source-author">McKinsey &amp; Company · 調査：2025年6月〜9月、n = 10,018 · 74ページ</div>
+        <div class="source-pages-label">参照した主要ページ</div>
+        <div class="source-page-list">
+          <div class="source-page-item"><div class="page-num">p.7</div><div class="page-topic">88%がAIを導入；1%が成熟；19%が収益への5%超の影響</div></div>
+          <div class="source-page-item"><div class="page-num">p.8</div><div class="page-topic">86%が未準備；6社に1社はCレベルAI責任者なし；1：5の人材比率</div></div>
+          <div class="source-page-item"><div class="page-num">p.9</div><div class="page-topic">図表1：地域別主要障壁；パイオニア vs. 非パイオニアデータ</div></div>
+          <div class="source-page-item"><div class="page-num">p.10</div><div class="page-topic">4ステップの公式：戦略・技術プラットフォーム・ワークフロー再設計・人材</div></div>
+          <div class="source-page-item"><div class="page-num">p.11</div><div class="page-topic">図表2：主要導入要因（使いやすさ42%・リーダーシップ36%）</div></div>
+          <div class="source-page-item"><div class="page-num">p.12–13</div><div class="page-topic">アリアンツケーススタディ；Bettina Dietscheのスキル変革について</div></div>
+          <div class="source-page-item"><div class="page-num">p.14以降</div><div class="page-topic">9つの組織シフト；人間＋AIエージェント協働モデル</div></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; margin:2.5rem 0 1rem; color:var(--text-primary);">一次資料内で引用された補助ソース</h3>
+    <table class="matrix reveal">
+      <thead>
+        <tr><th>ソース</th><th>主要インサイト</th><th>参照箇所</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Gartner, 2025</td><td>ガバナンスの課題により、2027年までにエージェント型AIベンチャーの40%が失敗</td><td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-muted)">SN EB p.10 · SN IB p.10</td></tr>
+        <tr><td>BCG, 2025</td><td>AIリーダーは3年間で60%高い株主リターンを実現</td><td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-muted)">SN IB p.12</td></tr>
+        <tr><td>PwC Global AI Jobs Barometer, 2025</td><td>AI活用度の高い業界は、準備の遅れた業界に対して従業員一人当たり収益が3倍上昇</td><td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-muted)">SN IB p.12</td></tr>
+        <tr><td>QuantumBlack / McKinsey, 2025年6月</td><td>エージェント型AIアドバンテージの獲得——コンポーザブルAIメッシュアーキテクチャ</td><td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-muted)">MK p.8, p.10</td></tr>
+        <tr><td>Microsoft Work Trend Index</td><td>人間対AI比率の概念；人間の監視とエージェント効率のバランスの最適化</td><td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-muted)">SN IB p.14</td></tr>
+        <tr><td>McKinsey State of AI, 2025年11月</td><td>エンドツーエンドのワークフロー再設計がGenAIから最大のEBIT効果を実現</td><td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-muted)">MK p.8</td></tr>
+        <tr><td>McKinsey Gen AI Inflection Point, 2024年8月</td><td>AI変革のための技術1：人材5の投資比率</td><td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-muted)">MK p.8</td></tr>
+        <tr><td>McKinsey Superagency, 2025年1月</td><td>米国CスイートのわずかA1%がGenAI展開を「成熟」と評価；19%が収益への5%超の影響を確認</td><td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-muted)">MK p.7</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>ServiceNow Innovation Office</span> 作成 · 2026年3月 · エグゼクティブ・AI変革チーム向け参考資料<br>
+  <span style="color:var(--text-muted); font-size:0.68rem; margin-top:0.5rem; display:block;">すべての統計は公開されている調査から引用。本文書は社内エグゼクティブ参考資料の統合版であり、ServiceNow公式出版物ではありません。</span>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Source scroll
+  const SOURCE_URLS = {
+    eb: 'https://servicenow.seismic.com/Link/Content/DC4dJBQCFpDBMG7C3RJpM9bjb6mB',
+    ib: 'https://www.servicenow.com/in/standard/resource-center/white-paper/wp-innovation-brief-work-reimagined.html',
+    mk: 'https://www.mckinsey.com/capabilities/people-and-organizational-performance/our-insights/the-state-of-organizations'
+  };
+
+  function scrollToSource(id) {
+    window.open(SOURCE_URLS[id], '_blank', 'noopener');
+  }
+
+  // Active nav highlight
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 100) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--sn-green)' : '';
+    });
+  });
+</script>
+</body>
+</html>
